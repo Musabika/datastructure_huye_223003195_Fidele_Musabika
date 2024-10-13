@@ -1,13 +1,12 @@
 from collections import deque
 
 parking_slots = [
-    {"SlotID": 501, "CarID": "AB1234", "EntryTime": "9:00 AM", "Available": False},
-    {"SlotID": 502, "CarID": None, "EntryTime": None, "Available": True},
-    {"SlotID": 503, "CarID": None, "EntryTime": None, "Available": True},
-    {"SlotID": 504, "CarID": None, "EntryTime": None, "Available": True},
+    {"SlotID": 501 + i, "CarID": None, "EntryTime": None, "Available": True}
+    for i in range(20)
 ]
 
 parking_stack = []
+
 waiting_queue = deque()
 
 def park_car(car_id, entry_time):
@@ -16,7 +15,7 @@ def park_car(car_id, entry_time):
             slot["CarID"] = car_id
             slot["EntryTime"] = entry_time
             slot["Available"] = False
-            parking_stack.append(slot)  
+            parking_stack.append(slot)
             print(f"Car {car_id} parked in slot {slot['SlotID']} at {entry_time}.")
             return
     waiting_queue.append({"CarID": car_id, "EntryTime": entry_time})
@@ -26,11 +25,14 @@ def remove_car():
     if not parking_stack:
         print("No cars to remove from the parking lot.")
         return
+    
     last_parked_car = parking_stack.pop()
+    print(f"Car {last_parked_car['CarID']} removed from slot {last_parked_car['SlotID']}. Slot is now available.")
+    
     last_parked_car["CarID"] = None
     last_parked_car["EntryTime"] = None
     last_parked_car["Available"] = True 
-    print(f"Car removed from slot {last_parked_car['SlotID']}. Slot is now available.")
+    
     if waiting_queue:
         next_car = waiting_queue.popleft()
         park_car(next_car["CarID"], next_car["EntryTime"])
@@ -42,10 +44,20 @@ def show_parking_lot_status():
         print(f"Slot {slot['SlotID']}: {status}")
 
 show_parking_lot_status()
-park_car("CD5678", "10:00 AM")
-park_car("EF9101", "10:30 AM")
+
+park_car("AB1234", "9:00 AM")
+park_car("CD5678", "9:30 AM")
+park_car("EF9101", "10:00 AM")
+park_car("GH2345", "10:30 AM")
+park_car("IJ6789", "11:00 AM")
+
 remove_car()
-park_car("GH2345", "11:00 AM")
+
+for i in range(6, 25):
+    park_car(f"Car{i}", f"12:{i-5}0 PM")
+
 show_parking_lot_status()
+
 remove_car()
 show_parking_lot_status()
+
